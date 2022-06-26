@@ -8,16 +8,26 @@
 #include <openssl/md5.h>
 
 struct encrypt{
-    static void md5(const std::string &src,std::string &dst){
-        //定义md5存储长度
-        unsigned char s_md5[MD5_DIGEST_LENGTH];
-        //调用OPENSSL md5加密函数
-        MD5((unsigned char*)&src, src.size(), (unsigned char*)&s_md5);
-        dst.resize(33);
+    static void md5(const char src[],char dst[32]){
+        unsigned char sMD5[16] = {0};
+        unsigned char* ret = MD5((const unsigned char*)src, strlen(src), sMD5);
         for(int i = 0; i < 16; i++){
-            //将加密字符串写入mdString变量中
-            sprintf(&dst[i*2], "%02x", (unsigned int)s_md5[i]);
+            //将加密字符串写入dst变量中
+            sprintf(&dst[i*2], "%02x",sMD5[i]);
         }
+
+        /*MD5_CTX ctx;
+        MD5_Init(&ctx);
+        for (const char &v : src){
+            MD5_Update(&ctx, (void*)&v, 1);
+        }
+        unsigned char sMD5[16] = {0};
+        int ret = MD5_Final(sMD5, &ctx);
+        //printf("ret:%d \n", ret);
+        for(int i = 0; i < 16; i++){
+            //将加密字符串写入dst变量中
+            sprintf(&dst[i*2], "%02x",s_md5[i]);
+        }*/
     }
 };
 

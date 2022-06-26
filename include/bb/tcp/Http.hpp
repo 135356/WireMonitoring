@@ -1,20 +1,21 @@
 // http协议
 // Created by 邦邦 on 2022/6/17.
 //
-#ifndef BB_HTTP_H
-#define BB_HTTP_H
+#ifndef BB_HTTP_HPP
+#define BB_HTTP_HPP
 #include <map>
 #include <string>
 #include <fcntl.h> //O_RDONLY
 #include <sys/stat.h> //fstat
+#include <sys/wait.h> //多进程
 #include "bb/tcp/IpTcp.h"
 #include "bb/tcp/S_Epoll.h"
 #include "bb/tcp/AnalyseHttp.h"
-#include "api/HttpRoutePath.hpp"
+#include "api/HttpRoutePath.h"
 
 namespace bb{
     class Http{
-        static const unsigned short THREAD_MAX{1}; //最大监听线程数
+        static const unsigned short THREAD_MAX{10}; //最大监听线程数
         static const unsigned short SEND_BUF_MAX{1472}; //每次最大发送字节
         static const unsigned short RECF_MAX_SIZE{65535}; //每次最大接收的字节
         //文件对应的类型(Content-Type)
@@ -45,7 +46,7 @@ namespace bb{
                 "Content-Type: "+content_type_[type_key]+"\r\n"
                 "Access-Control-Allow-Method: "+http_info->method+"\r\n" //GET,POST,OPTIONS,PUT,DELETE,PATCH,HEAD(发PUT请求前会先发OPTIONS请求进行预检)
                 "Access-Control-Allow-Headers: x-requested-with,content-type\r\n"; //x-requested-with,content-type包含Access-Control-Request-Headers附带的内容//http_info->head_data["Access-Control-Request-Headers"]
-            //如果使用epoll必须指定文件长度，否则会一直等待，超时才会断开链接，浏览器才会去发下一个文件
+            //如果使用epoll必须指定文件长度，否则会一直等待，超时才会断开链接，浏览器才会请求下一个文件
             if(file_size){s_head+="Content-Length: "+std::to_string(file_size)+"\r\n";}
             /*if(!http_info->head_data["Origin"].empty()){
                 "Access-Control-Allow-Origin: "+http_info->head_data["Origin"]+"\r\n" //等于*或Origin附带的内容(cors,如果请求中附带有Origin表示有跨域验证)
@@ -138,18 +139,7 @@ namespace bb{
         }
     public:
         explicit Http(int port=80){
-            bb::IpTcp tcp({}, port);
-            bb::S_Epoll::runF(tcp.socket_,[this](int &epoll_fd, int &client_fd){
-                char r_buf[RECF_MAX_SIZE] = {};
-                size_t r_length = recv(client_fd, r_buf, RECF_MAX_SIZE, 0);
-                if (r_length > 0) {
-                    handleHttpF_(client_fd,r_buf,r_length);
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-            /*bb::IpTcp tcp({}, port); //网络通信协议tcp/ip
+            bb::IpTcp tcp({}, port); //网络通信协议tcp/ip
             std::vector<std::thread> thread_arr{};
             thread_arr.reserve(THREAD_MAX);
             for(int i=0;i<THREAD_MAX;i++){
@@ -168,9 +158,18 @@ namespace bb{
             }
             for(auto &v:thread_arr){
                 if(v.joinable()){v.join();}
-            }*/
+            }
+        }
+        static void run(){
+            while(true){
+                pid_t pid1 = fork();
+                if(pid1 == 0){
+                    Http http;
+                }
+                waitpid(pid1, nullptr, 0);
+            }
         }
     };
 }
 
-#endif //BB_HTTP_H
+#endif //BB_HTTP_HPP
