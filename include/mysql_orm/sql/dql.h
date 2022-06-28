@@ -4,7 +4,6 @@
 
 #ifndef MYSQLORM_DQL_H
 #define MYSQLORM_DQL_H
-#include "Debug.h"
 #include "dml.h"
 
 namespace bb {
@@ -19,13 +18,10 @@ namespace bb {
         unsigned index_{}; //负载均衡下标(不会被其它用户的构造影响)
         std::string where_key_ = "*";
         std::array<std::string, 2> where_sql_ = {"", ""};
-    protected:
-        Debug debug{};
     public:
         PageData page_data_; //翻页信息
         std::vector<std::map<std::string, std::string>> data_; //查询到的数据
         explicit dql();
-
     public:
         //model获取类的名称
         virtual std::array<std::string, 2> getName_();

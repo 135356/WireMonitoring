@@ -13,7 +13,6 @@
 
 namespace bb {
     class IpTcp{
-        Log debug_;
     public:
         int socket_{}; //套接字
         struct sockaddr_in addr_{}; //结构体

@@ -4,20 +4,16 @@
 
 #ifndef MYSQLORM_DML_H
 #define MYSQLORM_DML_H
-#include "Debug.h"
 #include "ddl.h"
 #include "dml_type.h"
 
 namespace bb {
     class dml : public dml_type {
-        Debug debug{};
         std::array<std::string, 2> where_sql_ = {"", ""};
     protected:
         std::string DB_name_; //库名称
         std::string table_name_; //表名称
     public:
-        dml();
-
         //向mysql发送数据
         int query_(const std::string &sql);
     protected:

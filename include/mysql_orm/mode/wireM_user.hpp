@@ -8,14 +8,14 @@
 class wireM_user:public bb::dql{
     wireM_user(){
         if(run_() != 0){
-            debug.error("mode创建的时候出现问题");
+            bb::Log::obj().error("mode创建的时候出现问题");
         }
         update_();
     }
 public:
     static wireM_user &obj(){
-        static wireM_user wireM_user;
-        return wireM_user;
+        static wireM_user bb_wireM_user;
+        return bb_wireM_user;
     }
 protected:
     int run_(){

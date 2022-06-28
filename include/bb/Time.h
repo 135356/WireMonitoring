@@ -19,46 +19,15 @@ namespace bb{
             std::this_thread::sleep_for(std::chrono::microseconds(second)); //微秒
             std::this_thread::sleep_for(std::chrono::nanoseconds(second)); //纳秒
         }
+
     public:
-        static void sleep(const int &second){
-            std::this_thread::sleep_for(std::chrono::seconds(second));
-        }
+        static void sleep(const int &second);
         //获取当前时间戳,自 1970-01-01 起的(秒)
-        static time_t getTime(){
-            return time(nullptr);
-        }
+        static time_t getTime();
         //获取当前年、月、日、时间格式
-        static std::string getDate(const char format[]="%Y-%m-%d %H:%M:%S",const time_t &target_time=time(nullptr)){
-            char date[32]={};
-            strftime(date, sizeof(date),format,localtime(&target_time));
-            return date;
-        }
+        static std::string getDate(const char format[]="%Y-%m-%d %H:%M:%S",const time_t &target_time=time(nullptr));
         //获取当前时间，距离目标时间
-        static std::string getDateAuto(const time_t &target_time=0){
-            std::string date;
-            time_t time_current = time(nullptr);
-            struct tm p_compare{};
-            if(target_time > 0){
-                p_compare = *gmtime(&target_time);
-                uint32_t target_time_day = (uint32_t)target_time/86400;
-                uint32_t time_current_day = (uint32_t)time_current/86400;
-                if(target_time_day == time_current_day){
-                    date = "今天";
-                }else if(target_time_day == time_current_day-1){
-                    date = "昨天";
-                }else{ //(2022年10月10日)
-                    date = std::to_string(1900+p_compare.tm_year)+"年";
-                    date += std::to_string(1+p_compare.tm_mon)+"月";
-                    date += std::to_string(p_compare.tm_mday)+"日";
-                }
-            }else{
-                p_compare = *gmtime(&time_current);
-                date = "今天";
-            }
-            date += ' '+std::to_string(8+p_compare.tm_hour)+":";
-            date += p_compare.tm_min<10?'0'+std::to_string(p_compare.tm_min):std::to_string(p_compare.tm_min);
-            return date;
-        }
+        static std::string getDateAuto(const time_t &target_time=0);
     };
 }
 #endif //BB_TIME_H

@@ -4,6 +4,7 @@
 #ifndef BB_S_EPOLL_H
 #define BB_S_EPOLL_H
 #include <functional>
+#include "bb/Log.h"
 
 namespace bb {
     class S_Epoll {

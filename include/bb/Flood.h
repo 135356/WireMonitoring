@@ -15,17 +15,21 @@ namespace bb {
         bool is_one_rm{};
         bool is_two_rm{};
         //保存用户的ip与访问次数，
-        std::map<uint32_t, int> one;
-        std::map<uint32_t, int> two;
+        std::map<uint32_t, unsigned> one;
+        std::map<uint32_t, unsigned> two;
         uint32_t interval_seconds_{}; //间隔时间内
         uint32_t max_number_{}; //可以触发的最大次数
     public:
         Flood() = default;
-
         explicit Flood(const uint32_t &interval_seconds = 3600, const uint32_t &max_number = 60);
-
+        //将ip加入队列
+        void push(uint32_t &s_addr);
+        //获取访问次数
+        unsigned get(uint32_t &s_addr);
         //验证ip是否超过访问次数
-        bool isIp(uint32_t &s_addr);
+        bool is(uint32_t &s_addr);
+        //将ip加进去同时验证访问次数
+        bool pushIs(uint32_t &s_addr);
     };
 }
 

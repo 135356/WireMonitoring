@@ -7,17 +7,14 @@
 #include <vector>
 #include <array>
 #include <string>
-#include "Debug.h"
+#include "bb/Log.h"
 
 namespace bb {
     class dml_type {
-        Debug debug{};
     protected:
         std::vector<std::array<std::string, 6>> sql_arr_; //sql对象数组{key,"TINYINT类型","3长度","3精度","NOT NULL附加项","1是否redis索引"}
         std::vector<std::string> sql_other_; //特殊如INDEX (c2,c3)
     public:
-        dml_type();
-
         //小小整型-2^7 到 2^7-1(-128到127)，0到255 默认为4 大小1个字节
         dml_type *tinyint_(const std::string &key);
 

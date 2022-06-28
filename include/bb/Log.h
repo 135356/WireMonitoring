@@ -5,30 +5,31 @@
 #ifndef BB_LOG_H
 #define BB_LOG_H
 #include <string>
+#include <mutex>
 #include <exception>
 #include "Time.h"
 
 namespace bb {
+    //__FILE__,__LINE__,__func__
     class Log{
-        short mode_; //0=不写日记、1=写日记
         std::string msg_arr_; //消息内容
-        std::string file_path_{}; //发生异常的文件路径与名称
-    public:
-        explicit Log(const short &mode=1,std::string file_path={});
+        Log()=default;
         ~Log();
     public:
-        //修改模式
-        void setMode(short mode);
+        static Log &obj();
+    public:
         //一般信息
         void info(std::string msg);
+        void info(std::string msg,const std::string &file_path);
+        void info(std::string msg,const std::string &file_path,const int &line);
         //警告信息
         void warn(std::string msg);
-        //同上，添加错误行
-        void warn(std::string msg,int line);
+        void warn(std::string msg,const std::string &file_path);
+        void warn(std::string msg,const std::string &file_path,const int &line);
         //错误信息
         void error(std::string msg);
-        //同上，添加错误行
-        void error(std::string msg,int line);
+        void error(std::string msg,const std::string &file_path);
+        void error(std::string msg,const std::string &file_path,const int &line);
     };
 }
 #endif //BB_LOG_H

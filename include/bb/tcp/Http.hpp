@@ -7,7 +7,7 @@
 #include <string>
 #include <fcntl.h> //O_RDONLY
 #include <sys/stat.h> //fstat
-#include <sys/wait.h> //多进程
+#include <sys/wait.h>
 #include "bb/tcp/IpTcp.h"
 #include "bb/tcp/S_Epoll.h"
 #include "bb/tcp/AnalyseHttp.h"
@@ -15,7 +15,7 @@
 
 namespace bb{
     class Http{
-        static const unsigned short THREAD_MAX{10}; //最大监听线程数
+        unsigned short THREAD_MAX{100}; //最大监听线程数
         static const unsigned short SEND_BUF_MAX{1472}; //每次最大发送字节
         static const unsigned short RECF_MAX_SIZE{65535}; //每次最大接收的字节
         //文件对应的类型(Content-Type)
@@ -137,8 +137,9 @@ namespace bb{
             delete http_info;
             return state;
         }
-    public:
-        explicit Http(int port=80){
+        //监听80端口
+        void run_(int port=80){
+            signal(SIGABRT,forkStop_); //信号通信
             bb::IpTcp tcp({}, port); //网络通信协议tcp/ip
             std::vector<std::thread> thread_arr{};
             thread_arr.reserve(THREAD_MAX);
@@ -160,14 +161,65 @@ namespace bb{
                 if(v.joinable()){v.join();}
             }
         }
-        static void run(){
-            while(true){
-                pid_t pid1 = fork();
-                if(pid1 == 0){
-                    Http http;
-                }
-                waitpid(pid1, nullptr, 0);
+        explicit Http()=default;
+        ~Http()=default;
+    private:
+        //记录pid
+        static void forkWrite_(unsigned pid=getpid()){
+            FILE *fp = fopen("./WM_pid.key", "wb");
+            if(fwrite(&pid,4,1,fp) != 1){
+                bb::Log::obj().error("./WM_pid.key 写入错误");
             }
+            fclose(fp);
+        }
+        static void forkWrite_(unsigned pid,unsigned pid1){
+            FILE *fp = fopen("./WM_pid.key", "wb");
+            if(fwrite(&pid,4,1,fp) != 1){
+                bb::Log::obj().error("./WM_pid.key 写入错误");
+            }
+            if(fwrite(&pid1,4,1,fp) != 1){
+                bb::Log::obj().error("./WM_pid.key 写入错误");
+            }
+            fclose(fp);
+        }
+        //信号通信
+        static void forkStop_(int signum){
+            if(signum == SIGABRT){ //终止程序
+                exit(-1);
+            }
+        }
+    public:
+        static void test(){
+            forkWrite_();
+            Http http;http.THREAD_MAX=1;http.run_();
+        }
+        static void run(){
+            unsigned pid=getpid();
+            while(true){
+                pid_t c_pid = fork();
+                if(c_pid == 0){
+                    forkWrite_(pid,getpid());
+                    Http http;http.run_();
+                }
+                waitpid(c_pid, nullptr, 0);
+            }
+        }
+        //杀死进程
+        static void forkKill(){
+            FILE *fp = fopen("./WM_pid.key", "rb");
+            if(!fp){perror("程序没有启动");return ;}
+            int pid{},pid1{};
+            if(fread(&pid,4,1,fp) != 1){
+                perror("./WM_pid.key 读取失败");
+            }else if(fread(&pid1,4,1,fp) != 1){}
+            if(pid1){ //先停止子进程
+                kill(pid1 ,SIGABRT);
+            }
+            if(pid){ //在停止首进程
+                kill(pid ,SIGABRT);
+            }
+            printf("success\n");
+            fclose(fp);
         }
     };
 }

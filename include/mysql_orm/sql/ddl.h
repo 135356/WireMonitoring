@@ -9,26 +9,21 @@
 #include <array>
 #include <string>
 #include <cstring>
-#include "Debug.h"
+#include "bb/Log.h"
 #include "mysql_orm/mysql/mysql.h"
 
 namespace bb {
     class ddl {
-        Debug debug;
-
         ddl();
-
         ~ddl();
-
     protected:
+        std::string config_path_ = "./bb_mysql_orm_config.conf"; //配置文件
+        std::map<std::string, std::string> config; //数据库的配置信息
+        int initMysql(std::string &host, std::string &user, std::string &password, std::string &port, std::string &unix_socket, std::string &client_flag);
+    public:
         std::vector<MYSQL> connect{}; //mysql的tcp连接
         unsigned dql_index{}; //负载均衡下标,轮询切换服务器,只有DQL需要切换只在new的时候切换(同一个用户不进行切换)
-        std::map<std::string, std::string> config; //数据库的配置信息
-        //单例
-        static ddl &obj();
-
-        int initMysql(std::string &host, std::string &user, std::string &password, std::string &port,
-                      std::string &unix_socket, std::string &client_flag);
+        static ddl &obj(); //单例
     };
 }
 
