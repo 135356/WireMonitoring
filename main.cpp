@@ -1,15 +1,17 @@
-#include "bb/tcp/Http.hpp"
+#include <iostream>
+#include "Work.h"
 
 int main(int argc, char *argv[]) {
     if(argc > 1){
         if(strncmp(argv[1],"stop",4) == 0){
-            bb::Http::forkKill();
+            bb::Work::forkKill();
         }else if(strncmp(argv[1],"test",4) == 0){
-            bb::Http::test();
+            bb::Work::test();
         }else if(strncmp(argv[1],"start",3) == 0){
-            bb::Http::run();
+            bb::Work::run();
         }
+    }else{
+        bb::Work::test();
     }
-
     return 0;
 }

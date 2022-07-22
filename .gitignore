@@ -37,3 +37,6 @@
 .idea
 cmake-build-debug
 cmake-build-release
+build
+cmake
+.vscode/c_cpp_properties.json
