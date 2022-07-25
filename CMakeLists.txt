@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
-project(wire_monitoring VERSION 1.2.2)
+project(wire_monitoring VERSION 3.0.1)
 
 #Debug｜Release模式: -g表示带调试信息，-Wall表示输出所有的警告信息
 set(CMAKE_BUILD_TYPE Release) #cmake根据编译器加-g参数(调试)
@@ -18,7 +18,7 @@ else()
     add_library(wire_monitoring STATIC ${SRC_FILE})
 endif()
 set(CMAKE_PREFIX_PATH ${install_dir}/cmake/modules)
-find_package(bb 2.0 REQUIRED NO_MODULE)
+find_package(bb 3.0 REQUIRED NO_MODULE)
 find_package(ssl REQUIRED NO_MODULE)
 find_package(mysql REQUIRED NO_MODULE)
 find_package(mysql_orm REQUIRED NO_MODULE)

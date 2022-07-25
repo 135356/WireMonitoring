@@ -3,28 +3,33 @@
 #include <map>
 #include <string>
 #include <sys/wait.h>
+#include "bb/http/Config.hpp"
+#include "bb/http/Analyze.h"
 #include "bb/http/Serve.h"
 #include "api/Route.h"
 
 namespace bb{
     class Work{
-        Work()=default;
-        ~Work()=default;
+        Work();
+        ~Work();
         unsigned short THREAD_MAX{100}; //最大监听线程数
-        //监听80端口
-        void run_(int port=80);
-        //记录pid
-        static void forkWrite_(unsigned pid=getpid());
-        static void forkWrite_(unsigned pid,unsigned pid1);
-        //信号通信
-        static void forkStop_(int signum);
+        void runF_(int port=80); //监听80端口
+        static void stopF_(int signum){
+            if(signum == SIGABRT){ //判断接收到的信号
+                exit(0);
+            }
+        }
     public:
         //测试模式
-        static void test();
+        void testF();
         //正式模式
-        static void run();
-        //杀死进程
-        static void forkKill();
+        void formalF();
+        //停止进程
+        void stopF(char path[]);
+        static Work &obj(){
+            static Work bb_work;
+            return bb_work;
+        }
     };
 }
 
