@@ -6,7 +6,7 @@ namespace bb{
     }
     Work::~Work()=default;
     void Work::runF_(int port){
-        bb::S_Epoll epoll(port,1);
+        bb::S_Epoll epoll(port,10);
         epoll.runF([](int &client_fd,unsigned &client_ip)->bool{
             http::Serve *http_serve = new http::Serve(client_fd);
             //printf("%s\n",http_serve->r_buf);
