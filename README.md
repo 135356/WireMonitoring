@@ -20,6 +20,7 @@
 > 运行: ./wire_monitoring_run start&  
 > 停止: ./wire_monitoring_run stop
 ### 源码
-> 路由文件: /include/api/Route.h  
+> 路由头文件: /include/api/Route.h  
+> 路由源文件: /src/Route.cpp
 >> 如果你会C++你只需要更改这个文件便可完成路由功能  
 >> 否则你目前只能用它搭建静态网站
