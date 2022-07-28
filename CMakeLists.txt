@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
-project(wire_monitoring VERSION 3.0.1)
+project(wire_monitoring VERSION 3.1.0)
 
 #Debug｜Release模式: -g表示带调试信息，-Wall表示输出所有的警告信息
 set(CMAKE_BUILD_TYPE Release) #cmake根据编译器加-g参数(调试)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 aux_source_directory(${CMAKE_SOURCE_DIR}/src SRC_FILE)
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
@@ -19,14 +19,13 @@ else()
 endif()
 set(CMAKE_PREFIX_PATH ${install_dir}/cmake/modules)
 find_package(bb 3.0 REQUIRED NO_MODULE)
-find_package(ssl REQUIRED NO_MODULE)
 find_package(mysql REQUIRED NO_MODULE)
 find_package(mysql_orm REQUIRED NO_MODULE)
-include_directories(${bb_INCLUDES} ${ssl_INCLUDES} ${mysql_INCLUDES} ${mysql_orm_INCLUDES})
+include_directories(${bb_INCLUDES} ${mysql_INCLUDES} ${mysql_orm_INCLUDES})
 target_include_directories(wire_monitoring PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 add_executable(${PROJECT_NAME}_run main.cpp)
 add_dependencies(${PROJECT_NAME}_run wire_monitoring)
-target_link_libraries(${PROJECT_NAME}_run -lpthread bb mysql_orm wire_monitoring ${ssl_LIBS} ${mysql_LIBS})
+target_link_libraries(${PROJECT_NAME}_run -lpthread bb mysql_orm wire_monitoring ${mysql_LIBS})
 set(CMAKE_INSTALL_PREFIX ${install_dir}/${PROJECT_NAME})
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/" TYPE INCLUDE)
 install(TARGETS wire_monitoring ${PROJECT_NAME}_run

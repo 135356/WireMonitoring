@@ -6,12 +6,11 @@
 #include <string>
 #include <iostream>
 #include <regex>
-#include <openssl/md5.h>
 #include "bb/Time.h"
-#include "Token.h"
+#include "bb/Token.h"
+#include "bb/FloodIP.hpp"
 #include "mode/wireM_user.hpp"
 #include "mode/wireM_uploadFile.hpp"
-#include "WMFlood.hpp"
 
 class Route{
     Route() = default;
@@ -33,7 +32,7 @@ public:
     std::map<std::string, void (*)(std::map<std::string,std::string> &,std::string &,size_t &)> route_upload = {
         {"/png_file", [](std::map<std::string,std::string> &r_data,std::string &s_data,size_t &s_size) {
             s_data.resize(1024);
-            int state = wireM_uploadFile::obj().insert({{"accounts",r_data["accounts"]},{"file_type",r_data["file_type"]},{"file_name",r_data["file_name"]},{"file_saved_name",r_data["file_saved_name"]}});
+            int state = wireM_uploadFile::obj().insert({{"accounts",r_data["accounts"]},{"file_size",r_data["file_size"]},{"file_type",r_data["file_type"]},{"file_name",r_data["file_name"]},{"file_saved_name",r_data["file_saved_name"]}});
             s_size = sprintf(&s_data[0], R"({"state":%d,"msg":"%s","file_path":"%s"})", 0, "上传成功",r_data["file_saved_name"].c_str());
             s_data.resize(s_size);
         }}
@@ -46,7 +45,7 @@ public:
     std::map<std::string, void (*)(unsigned &,std::map<std::string,std::string> &,std::string &,size_t &)> route = {
         {"/logon",      [](unsigned &client_ip,std::map<std::string,std::string> &r_data,std::string &s_data,size_t &s_size) {
             s_data.resize(1024);
-            if(!WMFlood::obj().a10.pushIs(client_ip)){
+            if(!FloodIP::obj().b10.pushIs(client_ip)){
                 s_size = sprintf(&s_data[0], R"({"state":%d,"msg":"%s"})", -100, "次数超过限制，稍后再试");
                 s_data.resize(s_size);
                 return ;
@@ -64,7 +63,7 @@ public:
         }},
         {"/login",      [](unsigned &client_ip,std::map<std::string,std::string> &r_data,std::string &s_data,size_t &s_size) {
             s_data.resize(1024);
-            if(!WMFlood::obj().a10.pushIs(client_ip)){
+            if(!FloodIP::obj().a10.pushIs(client_ip)){
                 s_size = sprintf(&s_data[0], R"({"state":%d,"msg":"%s"})", -100, "次数超过限制，稍后再试");
             }else{
                 std::string token{};
@@ -97,7 +96,7 @@ public:
         }},
         {"/change_password", [](unsigned &client_ip,std::map<std::string,std::string> &r_data,std::string &s_data,size_t &s_size) {
             s_data.resize(1024);
-            if(!WMFlood::obj().a10.pushIs(client_ip)){
+            if(!FloodIP::obj().a10.pushIs(client_ip)){
                 s_size = sprintf(&s_data[0], R"({"state":%d,"msg":"%s"})", -100, "次数超过限制，稍后再试");
             }else{
                 int state = changePassword(r_data["accounts"].c_str(), r_data["password"].c_str(),r_data["new_password"].c_str(),r_data["token"]);

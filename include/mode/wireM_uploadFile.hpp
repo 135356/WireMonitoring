@@ -35,10 +35,10 @@ protected:
     int create_(){
         return createTable(table_name_,[](auto *data){
             data->string_("accounts")->nullable_()->comment_("帐号");
+            data->string_("file_size")->nullable_()->comment_("文件大小");
             data->string_("file_type")->nullable_()->comment_("文件类型");
             data->string_("file_name")->nullable_()->comment_("文件名称");
             data->string_("file_saved_name")->nullable_()->comment_("文件保存名称");
-            data->string_("url")->nullable_()->comment_("存文件的服务器地址:https://aaa.com/");
             data->dateAt_();
         });
     }

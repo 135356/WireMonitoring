@@ -4,13 +4,13 @@
 #include "api/Route.h"
 
 bool Route::accessTokenVerification(unsigned &client_ip,std::string &access_token){
-    if(!WMFlood::obj().a10.is(client_ip)){
+    if(!FloodIP::obj().a10.is(client_ip)){
         return false;
     }
     if (bb::Token::obj().is(access_token)) {
         return true;
     } else {
-        WMFlood::obj().b10.push(client_ip);
+        FloodIP::obj().a10.push(client_ip);
         return false;
     }
 }
@@ -55,7 +55,7 @@ int Route::logIn(const char *accounts,const char *password,std::string &token){
         return -4;
     }
     //成功返回token
-    bb::Token::obj().push(accounts,password,token);
+    bb::Token::obj().push(accounts,token);
     return 0;
 }
 int Route::changePassword(const char *accounts, const char *password, const char *new_password,std::string &token){
@@ -68,7 +68,6 @@ int Route::changePassword(const char *accounts, const char *password, const char
         return -3;
     }
     if (!bb::Token::obj().is(token)) {
-        bb::Token::obj().rm(token);
         return -40;
     }
     bb::Token::obj().rm(token);
