@@ -1,6 +1,5 @@
 //
 // Created by 邦邦 on 2022/6/24.
-//
 #include "api/Route.h"
 
 bool Route::accessTokenVerification(unsigned &client_ip,std::string &access_token){
@@ -27,11 +26,11 @@ int Route::logOn(const char *accounts,const char *password){
         return -3;
     }
     //mysql数据库验证
-    std::vector<std::map<std::string, std::string>> data = wireM_user::obj().where("email",accounts)->get();
+    std::vector<std::map<std::string, std::string>> data = bbBasics_user::obj().where("email",accounts)->get();
     if(!data.empty()){
         return -4;
     }
-    int is = wireM_user::obj().insert({{"email",accounts},{"password",password}});
+    int is = bbBasics_user::obj().insert({{"email",accounts},{"password",password}});
     if(is < 0){
         return -41;
     }
@@ -50,7 +49,7 @@ int Route::logIn(const char *accounts,const char *password,std::string &token){
         return -3;
     }
     //mysql数据库验证
-    std::vector<std::map<std::string, std::string>> data = wireM_user::obj().where("email",accounts)->where("password",password)->get();
+    std::vector<std::map<std::string, std::string>> data = bbBasics_user::obj().where("email",accounts)->where("password",password)->get();
     if(data.empty()){
         return -4;
     }
@@ -72,11 +71,11 @@ int Route::changePassword(const char *accounts, const char *password, const char
     }
     bb::Token::obj().rm(token);
     //mysql数据库验证
-    std::vector<std::map<std::string, std::string>> data = wireM_user::obj().where("email",accounts)->where("password",password)->get();
+    std::vector<std::map<std::string, std::string>> data = bbBasics_user::obj().where("email",accounts)->where("password",password)->get();
     if(data.empty()){
         return -4;
     }
-    int is = wireM_user::obj().where("email",accounts)->update({{"password",new_password}});
+    int is = bbBasics_user::obj().where("email",accounts)->update({{"password",new_password}});
     if(is < 0){
         return -41;
     }

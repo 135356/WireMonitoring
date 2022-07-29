@@ -1,22 +1,20 @@
-//
+// 上传文件的mysql数据库mode
 // Created by 邦邦 on 2022/7/5.
-//
-
-#ifndef WM_WIREM_USER_HPP
-#define WM_WIREM_USER_HPP
+#ifndef BB_BBBASICS_UPLOADFILE_H
+#define BB_BBBASICS_UPLOADFILE_H
 #include "mysql_orm/sql/dql.h"
 
-class wireM_user:public bb::dql{
-    wireM_user(){
+class bbBasics_uploadFile:public bb::dql{
+    bbBasics_uploadFile(){
         if(run_() != 0){
             bb::Log::obj().error("mode创建的时候出现问题");
         }
         update_();
     }
 public:
-    static wireM_user &obj(){
-        static wireM_user wire_m_user;
-        return wire_m_user;
+    static bbBasics_uploadFile &obj(){
+        static bbBasics_uploadFile wire_m_upload_file;
+        return wire_m_upload_file;
     }
 protected:
     int run_(){
@@ -34,15 +32,17 @@ protected:
     }
     int create_(){
         return createTable(table_name_,[](auto *data){
-            data->int_("grade")->nullable_()->comment_("等级");
-            data->int_("phone")->nullable_()->comment_("手机号");
-            data->string_("email")->nullable_()->comment_("邮箱");
-            data->string_("password")->nullable_()->comment_("密码");
+            data->string_("accounts")->nullable_()->comment_("帐号");
+            data->string_("file_size")->nullable_()->comment_("文件大小");
+            data->string_("file_type")->nullable_()->comment_("文件类型");
+            data->string_("file_name")->nullable_()->comment_("文件名称");
+            data->string_("file_saved_name")->nullable_()->comment_("文件保存名称");
             data->dateAt_();
         });
     }
     void update_(){
-        //delDB_("db_a1");
+        //delDB_("bb");
+        //delTable_();
     }
     void delTable_(const std::string &db_name={},const std::string &table_name={}){
         if(!db_name.empty()){
@@ -62,4 +62,4 @@ protected:
     }
 };
 
-#endif //WM_WIREM_USER_HPP
+#endif

@@ -1,7 +1,7 @@
 // http协议的路由地址
 // Created by 邦邦 on 2022/6/17.
-#ifndef WIREMONITORING_ROUTE_H
-#define WIREMONITORING_ROUTE_H
+#ifndef BBHTTP_ROUTE_H
+#define BBHTTP_ROUTE_H
 #include <map>
 #include <string>
 #include <iostream>
@@ -9,8 +9,8 @@
 #include "bb/Time.h"
 #include "bb/Token.h"
 #include "bb/FloodIP.hpp"
-#include "mode/wireM_user.hpp"
-#include "mode/wireM_uploadFile.hpp"
+#include "mode/bbBasics_user.hpp"
+#include "mode/bbBasics_uploadFile.hpp"
 
 class Route{
     Route() = default;
@@ -32,7 +32,7 @@ public:
     std::map<std::string, void (*)(std::map<std::string,std::string> &,std::string &,size_t &)> route_upload = {
         {"/png_file", [](std::map<std::string,std::string> &r_data,std::string &s_data,size_t &s_size) {
             s_data.resize(1024);
-            int state = wireM_uploadFile::obj().insert({{"accounts",r_data["accounts"]},{"file_size",r_data["file_size"]},{"file_type",r_data["file_type"]},{"file_name",r_data["file_name"]},{"file_saved_name",r_data["file_saved_name"]}});
+            int state = bbBasics_uploadFile::obj().insert({{"accounts",r_data["accounts"]},{"file_size",r_data["file_size"]},{"file_type",r_data["file_type"]},{"file_name",r_data["file_name"]},{"file_saved_name",r_data["file_saved_name"]}});
             s_size = sprintf(&s_data[0], R"({"state":%d,"msg":"%s","file_path":"%s"})", 0, "上传成功",r_data["file_saved_name"].c_str());
             s_data.resize(s_size);
         }}
