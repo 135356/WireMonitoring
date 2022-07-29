@@ -1,8 +1,8 @@
 # bb HTTP server
 ###### 一款Web服务器软件，它是高效率、轻量级、免安装的
-> 发布区 Releases 有已经编译好的二进制文件解压即可完成部署
+> [发布区 Releases 有已经编译好的二进制文件解压即可完成部署](https://github.com/135356/WireMonitoring/releases)
 ### 视频演示(3.0.1)
-> [bilibili.com/video/BV1wS4y1t7gH]https://www.bilibili.com/video/BV1wS4y1t7gH?share_source=copy_web&vd_source=238df0657244861dbcd6cf34d4a3b4da
+> [bilibili.com/video/BV1wS4y1t7gH](https://www.bilibili.com/video/BV1wS4y1t7gH?share_source=copy_web&vd_source=238df0657244861dbcd6cf34d4a3b4da)
 ### 数据库基本信息配置文件
 > */usr/local/bb/bb_mysql_orm_config.conf*
 ### 日志文件
