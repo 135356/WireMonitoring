@@ -14,7 +14,7 @@
 ### 依赖包
 > 安装 MySQL 路径为: /usr/local/mysql
 ### 下载安装
-> 发布区 [Releases](https://github.com/135356/bb-HTTP-server/releases) 下载: [bb_4.0.1_linux_x86_64.tar](https://github.com/135356/bb-HTTP-server/releases/download/4.0.1/bb_4.0.1_linux_x86_64.tar) 解压到 /usr/local/bb
+> 发布区 [Releases](https://github.com/135356/bb-HTTP-server/releases) 下载: [bb_4.0.2_linux_x86_64.tar](https://github.com/135356/bb-HTTP-server/releases/download/4.0.2/bb_4.0.2_linux_x86_64.tar) 解压到 /usr/local/bb
 #### 使用
 > 打开路径: cd /usr/local/bb  
 > 运行: ./bbhttp_run start&  
