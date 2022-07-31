@@ -33,8 +33,7 @@ protected:
     int create_(){
         return createTable(table_name_,[](auto *data){
             data->int_("grade")->nullable_()->comment_("等级");
-            data->int_("phone")->nullable_()->comment_("手机号");
-            data->string_("email")->nullable_()->comment_("邮箱");
+            data->string_("email")->unique_()->comment_("邮箱，要求唯一");
             data->string_("password")->nullable_()->comment_("密码");
             data->dateAt_();
         });

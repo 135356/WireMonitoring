@@ -100,11 +100,13 @@ namespace bb{
                 start_i++;break;
             }
         }
-        char name[end_i-start_i+1];
+        char name[end_i-start_i];
         memmove(&name[0],&path[start_i],end_i-start_i);
 
-        char cmd[end_i-start_i+11+1];
+        char cmd[end_i-start_i+11];
         sprintf(cmd,"killall -%d %s",SIGABRT,name);
+        cmd[end_i-start_i+11]='\0';
+
         system(cmd);
     }
 }
