@@ -13,8 +13,8 @@ class bbBasics_uploadFile:public bb::dql{
     }
 public:
     static bbBasics_uploadFile &obj(){
-        static bbBasics_uploadFile wire_m_upload_file;
-        return wire_m_upload_file;
+        static bbBasics_uploadFile bb_basics_upload_file;
+        return bb_basics_upload_file;
     }
 protected:
     int run_(){

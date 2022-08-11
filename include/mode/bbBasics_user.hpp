@@ -13,8 +13,8 @@ class bbBasics_user:public bb::dql{
     }
 public:
     static bbBasics_user &obj(){
-        static bbBasics_user wire_m_user;
-        return wire_m_user;
+        static bbBasics_user bb_basics_user;
+        return bb_basics_user;
     }
 protected:
     int run_(){
