@@ -7,7 +7,7 @@
 class bbBasics_user:public bb::dql{
     bbBasics_user(){
         if(run_() != 0){
-            bb::Log::obj().error("mode创建的时候出现问题");
+            bb::secure::Log::obj().error("mode创建的时候出现问题");
         }
         update_();
     }

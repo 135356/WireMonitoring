@@ -7,14 +7,18 @@
 #include <iostream>
 #include <regex>
 #include "bb/Time.h"
-#include "bb/Token.h"
-#include "bb/FloodIP.hpp"
+#include "bb/secure/Token.h"
 #include "mode/bbBasics_user.hpp"
 #include "mode/bbBasics_uploadFile.hpp"
+#include "FloodIP.hpp"
 
 class Route{
     Route() = default;
     ~Route() = default;
+public:
+    //access_token验证
+    static bool accessTokenVerification(unsigned &client_ip,std::string &access_token);
+private:
     //注册
     static int logOn(const char *accounts, const char *password);
     //登陆
@@ -26,8 +30,6 @@ public:
         static Route bb_http_route_path;
         return bb_http_route_path;
     }
-    //access_token验证
-    static bool accessTokenVerification(unsigned &client_ip,std::string &access_token);
     //文件路由请求(客户端上传文件)
     std::map<std::string, void (*)(std::map<std::string,std::string> &,std::string &,size_t &)> route_upload = {
         {"/png_file", [](std::map<std::string,std::string> &r_data,std::string &s_data,size_t &s_size) {
@@ -87,7 +89,7 @@ public:
         }},
         {"/logout", [](unsigned &client_ip,std::map<std::string,std::string> &r_data,std::string &s_data,size_t &s_size) {
             s_data.resize(1024);
-            if (bb::Token::obj().rm(r_data["token"])) {
+            if (bb::secure::Token::obj().rm(r_data["token"])) {
                 s_size = sprintf(&s_data[0], R"({"state":%d,"msg":"%s"})", 0, "登出成功");
             } else {
                 s_size = sprintf(&s_data[0], R"({"state":%d,"msg":"%s"})", -1, "登出失败");

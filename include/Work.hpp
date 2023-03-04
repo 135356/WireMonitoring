@@ -1,31 +1,35 @@
-#include "Work.h"
+#ifndef BB_WORK_H
+#define BB_WORK_H
+#include <map>
+#include <string>
+#include <sys/wait.h>
+#include "bb/net/http/Config.hpp"
+#include "bb/net/http/Serve.h"
+#include "Route.h"
 
-namespace bb{
-    Work::Work(){
+class Work{
+    Work(){
         signal(SIGABRT,stopF_); //当该进程收到停止信号时触发stopF_函数
     }
-    Work::~Work()=default;
-    void Work::runF_(int port){
-        bb::S_Epoll epoll(port,6);
+    ~Work()=default;
+    unsigned short THREAD_MAX{100}; //最大监听线程数
+    //监听80端口
+    void runF_(int port=80){
+        bb::net::TcpEpoll epoll(port,6);
         epoll.runF([](int &client_fd,unsigned &client_ip)->bool{
-            auto routeF = [](unsigned &client_ip,http::Serve *http_serve)->bool{
+            auto routeF = [](unsigned &client_ip,bb::net::http::Serve *http_serve)->bool{
                 std::string s_data{}; //要发送的内容
                 size_t s_size{}; //要发送的长度
                 if (http_serve->info->method == "GET"){
-                    if (Route::obj().route.count(http_serve->info->path)) {
+                    if (Route::obj().route.count(http_serve->info->path)) { //路由请求
                         Route::obj().route[http_serve->info->path](client_ip,http_serve->info->get_map,s_data,s_size); //运行路由里面的方法，传递接收到的数据 与 发送的数据(&别名)
                         return http_serve->sendF("get",s_data,s_size);
                     }else{
-                        if(http_serve->info->get_map["request_type"] == "download"){ //客户端下载文件
-                            if(Route::accessTokenVerification(client_ip,http_serve->info->get_map["access_token"])){
-                                return http_serve->sendFile(http_serve->info->get_map["access_token"]);
-                            }else{
-                                return http_serve->sendF("get","500 error");
-                            }
-                        }else if (http_serve->info->method == "GET") { //网页 或 其它请求
+                        if(http_serve->info->get_map["request_type"] == "download"){ //文件下载请求
+                            return http_serve->sendFile();
+                        }else{ //网页 或 其它请求
                             return http_serve->sendHtml();
                         }
-                        return http_serve->sendF("get","404 (Not path) or (GET route)");
                     }
                 }else if (http_serve->info->method == "POST") {
                     if (Route::obj().route.count(http_serve->info->path)) {
@@ -61,18 +65,26 @@ namespace bb{
                 }
             };
 
-            http::Serve *http_serve = new http::Serve(client_fd);
+            bb::net::http::Serve *http_serve = new bb::net::http::Serve(client_fd);
             //printf("r_buf:%s\n",http_serve->r_buf);
             if(!http_serve->info){return false;} //如果http没有解析出有用数据就直接返回
             bool is = routeF(client_ip,http_serve);
             delete http_serve;
             return is;
         });
+    };
+    static void stopF_(int signum){
+        if(signum == SIGABRT){ //判断接收到的信号
+            exit(0);
+        }
     }
-    void Work::testF(){
+public:
+    //测试模式
+    void testF(){
         runF_();
     }
-    void Work::formalF(){
+    //正式模式
+    void formalF(){
         while(true){
             pid_t c_pid = fork();
             if(c_pid == 0){
@@ -87,11 +99,12 @@ namespace bb{
                     if(v.joinable()){v.join();}
                 }
             }
-            bb::Log::obj().info("退出子进程");
+            bb::secure::Log::obj().info("退出子进程");
             waitpid(c_pid, nullptr, 0);
         }
     }
-    void Work::stopF(char path[]){
+    //停止进程
+    void stopF(char path[]){
         size_t start_i,end_i=strlen(path);
         for(start_i=end_i;start_i>0;start_i--){
             if(path[start_i] == '/'){
@@ -107,4 +120,10 @@ namespace bb{
 
         system(cmd);
     }
-}
+    static Work &obj(){
+        static Work bb_work;
+        return bb_work;
+    }
+};
+
+#endif

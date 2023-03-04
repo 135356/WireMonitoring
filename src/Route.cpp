@@ -1,12 +1,12 @@
 //
 // Created by 邦邦 on 2022/6/24.
-#include "api/Route.h"
+#include "Route.h"
 
 bool Route::accessTokenVerification(unsigned &client_ip,std::string &access_token){
     if(!FloodIP::obj().a10.is(client_ip)){
         return false;
     }
-    if (bb::Token::obj().is(access_token)) {
+    if (bb::secure::Token::obj().is(access_token)) {
         return true;
     } else {
         FloodIP::obj().a10.push(client_ip);
@@ -54,7 +54,7 @@ int Route::logIn(const char *accounts,const char *password,std::string &token){
         return -4;
     }
     //成功返回token
-    bb::Token::obj().push(accounts,token);
+    bb::secure::Token::obj().push(accounts,token);
     return 0;
 }
 int Route::changePassword(const char *accounts, const char *password, const char *new_password,std::string &token){
@@ -66,10 +66,10 @@ int Route::changePassword(const char *accounts, const char *password, const char
     if(strlen(password) != 32 || strlen(new_password) != 32){
         return -3;
     }
-    if (!bb::Token::obj().is(token)) {
+    if (!bb::secure::Token::obj().is(token)) {
         return -40;
     }
-    bb::Token::obj().rm(token);
+    bb::secure::Token::obj().rm(token);
     //mysql数据库验证
     std::vector<std::map<std::string, std::string>> data = bbBasics_user::obj().where("email",accounts)->where("password",password)->get();
     if(data.empty()){

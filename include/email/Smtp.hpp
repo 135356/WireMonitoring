@@ -18,7 +18,7 @@
     #include <net/if.h>
     #include <sys/ioctl.h>
 #endif
-#include "bb/Base64.h"
+#include "bb/ssl/Base64.h"
 
 class Smtp{
     int s_port_;
@@ -117,14 +117,14 @@ public:
         //用户名
         r_buf[0]='\0';
         s_str = own_user_.substr(0, own_user_.find('@', 0));
-        s_str = bb::Base64::en(s_str.c_str());
+        s_str = bb::ssl::Base64::en(s_str.c_str());
         s_str += "\r\n";
         if(send(socket_,s_str.c_str(),s_str.size(),0) == -1 || recv(socket_, r_buf, 0xFFF, 0) == -1){return -1;}
         if(strstr(r_buf, "334") == nullptr){return -2;}
 
         //密码
         r_buf[0]='\0';
-        s_str = bb::Base64::en(own_password_.c_str());
+        s_str = bb::ssl::Base64::en(own_password_.c_str());
         s_str += "\r\n";
         if(send(socket_,s_str.c_str(),s_str.size(),0) == -1 || recv(socket_, r_buf, 0xFFF, 0) == -1){return -1;}
         if(strstr(r_buf, "235") == nullptr){return -2;}
