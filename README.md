@@ -1,4 +1,4 @@
-# bb HTTP server
+# bb HTTP server( 已更名为[135356/web_server](https://github.com/135356/web_server/releases) )
 ###### 一款Web服务器软件，它是高效率、轻量级、免安装的
 > [发布区 Releases 有已经编译好的二进制文件解压即可完成部署](https://github.com/135356/bb-HTTP-server/releases)
 ### 视频演示(3.0.1)
